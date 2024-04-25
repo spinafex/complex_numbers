@@ -1,0 +1,55 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the j-function (example modular form)
+def j_function(z):
+  # Replace this with your specific modular form definition
+  q = np.exp(2*np.pi*1j*z)
+  sum = 0
+  n = 1
+  while np.any(abs(sum) < 1e-6):  # Loop until sum converges (tolerance level)
+    sum += 1 / (q**(n**2))
+    n += 1
+  return 1/q + 8 * sum
+
+# Define boundaries for the plot (focusing on upper half-plane)
+real_min = -2
+real_max = 2
+imag_min = 0.1
+imag_max = 2
+
+# Create a mesh grid of complex numbers in the upper half-plane
+x, y = np.linspace(real_min, real_max, 200), np.linspace(imag_min, imag_max, 100)
+X, Y = np.meshgrid(x, y)
+Z = X + 1j * Y  # Combine real and imaginary parts
+
+# Calculate absolute value and real/imaginary parts of the j-function
+C = abs(j_function(Z))
+real_part = j_function(Z).real
+imag_part = j_function(Z).imag
+
+# Create the plot (two subplots)
+fig, (ax1, ax2) = plt.subplots(1, 2)  
+
+# Plot absolute value (magnitude) on subplot 1
+cax = ax1.imshow(C, extent=(real_min, real_max, imag_min, imag_max), cmap="plasma")
+ax1.set_xlabel("Real")
+ax1.set_ylabel("Imaginary (Upper Half Plane)")
+ax1.set_title("Absolute Value (Magnitude) of j-Function")
+plt.colorbar(cax, label="|j(z)|")
+
+# Plot level lines of real part on subplot 2
+ax2.contour(X, Y, real_part, levels=10, cmap="coolwarm")
+ax2.set_xlabel("Real")
+ax2.set_ylabel("Imaginary (Upper Half Plane)")
+ax2.set_title("Level Lines of Real Part (Re(j(z)))")
+
+# Limit plots to the upper half-plane (for both subplots)
+ax1.set_ylim(bottom=imag_min)
+ax2.set_ylim(bottom=imag_min)
+
+# Adjust layout for better visualization
+plt.tight_layout()
+
+# Show the plot
+plt.show()
