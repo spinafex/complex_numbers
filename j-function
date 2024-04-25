@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Define the j-function (example modular form)
 def j_function(z):
@@ -23,30 +23,32 @@ x, y = np.linspace(real_min, real_max, 200), np.linspace(imag_min, imag_max, 100
 X, Y = np.meshgrid(x, y)
 Z = X + 1j * Y  # Combine real and imaginary parts
 
-# Calculate absolute value and real/imaginary parts of the j-function
+# Calculate absolute value and real part of the j-function
 C = abs(j_function(Z))
 real_part = j_function(Z).real
-imag_part = j_function(Z).imag
 
-# Create the plot (two subplots)
-fig, (ax1, ax2) = plt.subplots(1, 2)  
+# Create the plot
+fig, ax = plt.subplots()
 
-# Plot absolute value (magnitude) on subplot 1
-cax = ax1.imshow(C, extent=(real_min, real_max, imag_min, imag_max), cmap="plasma")
-ax1.set_xlabel("Real")
-ax1.set_ylabel("Imaginary (Upper Half Plane)")
-ax1.set_title("Absolute Value (Magnitude) of j-Function")
-plt.colorbar(cax, label="|j(z)|")
+# Plot absolute value with a chosen colormap
+cax1 = ax.imshow(C, extent=(real_min, real_max, imag_min, imag_max), cmap="plasma", alpha=0.8)  # Adjust alpha for transparency
 
-# Plot level lines of real part on subplot 2
-ax2.contour(X, Y, real_part, levels=10, cmap="coolwarm")
-ax2.set_xlabel("Real")
-ax2.set_ylabel("Imaginary (Upper Half Plane)")
-ax2.set_title("Level Lines of Real Part (Re(j(z)))")
+# Plot real part contours with a different colormap
+ax.contour(X, Y, real_part, levels=10, cmap="coolwarm")
 
-# Limit plots to the upper half-plane (for both subplots)
-ax1.set_ylim(bottom=imag_min)
-ax2.set_ylim(bottom=imag_min)
+# Label axes and add title
+ax.set_xlabel("Real")
+ax.set_ylabel("Imaginary (Upper Half Plane)")
+ax.set_title("Combined Visualization of j-Function (Magnitude and Real Part)")
+
+# Colorbars for both plots
+plt.colorbar(cax1, label="|j(z)|")  # Colorbar for absolute value
+sm = plt.cm.ScalarMappable(cmap="coolwarm")
+sm.set_array([])  # Create an empty array for colorbar
+plt.colorbar(sm, label="Re(j(z))")  # Colorbar for real part
+
+# Limit plot to the upper half-plane
+ax.set_ylim(bottom=imag_min)
 
 # Adjust layout for better visualization
 plt.tight_layout()
