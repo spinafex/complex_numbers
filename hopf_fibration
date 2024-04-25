@@ -1,0 +1,68 @@
+import numpy as np
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def stereographic_projection(x, y, z):
+  """
+  Projects a point on the 3-sphere (S^3) to the unit sphere (S^2) using stereographic projection.
+  Handles potential division by zero errors and ensures real number outputs.
+  """
+  w = x + 1j * y
+
+  # Check for near-zero denominator to avoid division by zero
+  if np.any(abs(1 + np.abs(w)**2)) < 1e-10:
+    return 0, 0  # Or return a small non-zero value for visualization
+
+  # Perform calculations with complex numbers for accuracy
+  x2 = (2.0 * w.real) / (1.0 + np.abs(w)**2)
+  y2 = (2.0 * z) / (1.0 + np.abs(w)**2)
+
+  # Return all three coordinates (ensure real number conversion)
+  return np.real(x2), np.real(y2), np.real(z)
+
+
+def hopf_fibration(theta, phi):
+  """
+  Hopf fibration mapping from angles theta and phi to a point on S^3.
+  """
+  x = np.sin(theta) * np.cos(phi)
+  y = np.sin(theta) * np.sin(phi)
+  z = np.cos(theta)
+  return x, y, z
+
+# Generate angles for sampling points on S^2
+theta = np.linspace(0, np.pi, 40)
+phi = np.linspace(0, 2*np.pi, 60)
+Theta, Phi = np.meshgrid(theta, phi)
+
+# Sample points on S^2 using angles
+X2, Y2, Z2 = stereographic_projection(np.cos(Theta) * np.sin(Phi), np.sin(Theta) * np.sin(Phi), np.cos(Phi))
+
+# Calculate corresponding points on S^3 using Hopf fibration
+X3, Y3, Z3 = hopf_fibration(Theta, Phi)
+
+# Create the 3D plot
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the unit sphere (S^2) in gray, ensuring real number conversion
+X2_flat = np.real(X2.flatten())
+Y2_flat = np.real(Y2.flatten())
+ax.plot_trisurf(X2_flat, Y2_flat, np.zeros_like(X2.flat), cmap='gray', linewidth=0.1, alpha=0.8)
+
+# Plot the fibers (circles on S^3 projected to S^2) in blue
+for i in range(len(Theta)):
+  for j in range(len(Phi)):
+    #x, y, z = hopf_fibration(Theta[i, j], Phi[i, j])
+    x, y, z = stereographic_projection(x, y, z)  # Function call (returns X, Y, Z)
+    x2, y2 = x, y  # Unpack the first two values (X, Y)
+    ax.plot(x2, y2, color='blue', linewidth=0.5)
+
+# Set labels and title
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+ax.set_title("Hopf Fibration (Stereographic Projection)")
+
+plt.tight_layout()
+plt.show()
