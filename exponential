@@ -1,0 +1,51 @@
+import matplotlib.pyplot as plt
+import math
+
+# Define the exponential function
+def exp(z):
+  return np.exp(z.real) * (np.cos(z.imag) + 1j * np.sin(z.imag))
+
+# Define transformation function (maps a strip to upper half-plane)
+def transform(z):
+  return 2*math.pi*z / (1j - z)
+
+# Define boundaries for the plot (focusing on a strip)
+real_min = -1
+real_max = 1
+imag_min = 0.1
+imag_max = 1
+
+# Create a mesh grid of complex numbers in the strip
+x, y = np.linspace(real_min, real_max, 200), np.linspace(imag_min, imag_max, 100)
+X, Y = np.meshgrid(x, y)
+Z = X + 1j * Y  # Combine real and imaginary parts
+
+# Apply transformation to map the strip
+transformed_Z = transform(Z)
+
+# Calculate absolute value (magnitude) of the exponential function after transformation
+C = abs(exp(transformed_Z))
+
+# Separate real and imaginary parts for plotting (mostly for reference here)
+# real_part = C.real
+# imag_part = C.imag 
+
+# Create the plot
+fig, ax = plt.subplots()
+
+# Plot the absolute value (magnitude) of the function (adjust colormap as desired)
+cax = ax.imshow(C, extent=(real_min, real_max, imag_min, imag_max), cmap="plasma")
+
+# Label axes
+ax.set_xlabel("Real")
+ax.set_ylabel("Imaginary (Strip)")
+ax.set_title("Exponential Function after Transformation (Strip Mapped to Upper Half-Plane)")
+
+# Add colorbar for magnitude
+plt.colorbar(cax, label="Magnitude of exp(transform(z))")
+
+# Limit the plot to the strip (for reference, actual visualization doesn't require this)
+# ax.set_ylim(bottom=imag_min)
+
+# Show the plot
+plt.show()
