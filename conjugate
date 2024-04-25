@@ -1,0 +1,51 @@
+import matplotlib.pyplot as plt
+
+# Define the conjugate function
+def conjugate(z):
+  return z.real - 1j * z.imag
+
+# Define boundaries for the plot (focusing on upper half-plane)
+real_min = -2
+real_max = 2
+imag_min = 0.1
+imag_max = 2
+
+# Create a mesh grid of complex numbers in the upper half-plane
+x, y = np.linspace(real_min, real_max, 200), np.linspace(imag_min, imag_max, 100)
+X, Y = np.meshgrid(x, y)
+Z = X + 1j * Y  # Combine real and imaginary parts
+
+# Calculate real and imaginary parts of the conjugate function for each point
+conj_real = conjugate(Z).real
+conj_imag = conjugate(Z).imag
+
+# Create the plot
+fig, (ax1, ax2) = plt.subplots(1, 2)  # Two subplots for real and imaginary parts
+
+# Plot real part on the left subplot
+ax1.scatter(X, conj_real, s=1, c="blue", label="Real(conj(z))")  # Adjust marker size (s)
+
+# Plot imaginary part on the right subplot (mirrored across real axis)
+ax2.scatter(X, -conj_imag, s=1, c="red", label="Imag(conj(z))")  # Inverted sign for mirroring
+
+# Label axes and add titles
+ax1.set_xlabel("Real")
+ax1.set_ylabel("Real(conj(z))")
+ax1.set_title("Real Part of Conjugate Function (Upper Half-Plane Input)")
+ax2.set_xlabel("Real")
+ax2.set_ylabel("Imag(conj(z))")
+ax2.set_title("Imaginary Part of Conjugate Function (Mirrored on Real Axis)")
+
+# Add legend
+ax1.legend()
+ax2.legend()
+
+# Limit plots to the upper half-plane (for both subplots)
+ax1.set_ylim(bottom=imag_min)
+ax2.set_ylim(bottom=-imag_max)  # Inverted for mirroring
+
+# Adjust layout for better visualization
+plt.tight_layout()
+
+# Show the plot
+plt.show()
