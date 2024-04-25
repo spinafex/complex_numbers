@@ -1,0 +1,49 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+
+# Define the complex function (replace this with your desired function)
+def f(z):
+  # Example function: z^3
+  return z**2
+
+# Define boundaries for the plot (adjust as needed)
+real_min = -2
+real_max = 2
+imag_min = 0.1  # Ensure positive imaginary part for upper half-plane
+imag_max = 2
+
+# Create a mesh grid of complex numbers
+x, y = np.linspace(real_min, real_max, 200), np.linspace(imag_min, imag_max, 100)
+X, Y = np.meshgrid(x, y)
+Z = X + 1j * Y  # Combine real and imaginary parts into complex numbers
+
+# Calculate function values for each point in the mesh
+C = f(Z)
+
+# Separate real and imaginary parts for plotting
+real_part = C.real
+imag_part = C.imag
+
+# Create the plot
+fig, ax = plt.subplots()
+
+# Plot the absolute value (magnitude) of the function (adjust colormap as desired)
+cax = ax.imshow(abs(C), extent=(real_min, real_max, imag_min, imag_max), cmap="plasma")
+
+# Add contours to show the function's behavior (adjust levels as needed)
+ax.contour(X, Y, abs(C), levels=10, cmap="coolwarm")
+
+# Label the axes
+ax.set_xlabel("Real")
+ax.set_ylabel("Imaginary (Upper Half Plane)")
+ax.set_title("Visualization of f(z) on the Upper Half Plane")
+
+# Add colorbar for magnitude
+plt.colorbar(cax, label="Magnitude of f(z)")
+
+# Limit the plot to the upper half-plane
+ax.set_ylim(bottom=imag_min)
+
+# Show the plot
+plt.show()
